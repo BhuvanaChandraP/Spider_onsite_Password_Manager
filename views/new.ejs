@@ -5,14 +5,57 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New account credentials</title>
+    <style>
+        #container{
+            padding: 100px;
+            padding-top: 20px;
+            /* margin: auto; */
+            text-align: center;
+        }
+        form{
+            margin: auto;
+            padding: 100px;
+            background-color: rgb(61, 61, 61);
+            max-width: fit-content;
+        }
+        input{
+            padding: 10px;
+        }
+        label{
+            color: white;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <form>
-        <input class="textArea" type="text" name="account[title]" placeholder="Title" required>
-        <input class="textArea" type="text" name="account[username]" placeholder="Username" required>
-        <input class="textArea" id="generatedPassword" type="text" name="account[password]" placeholder="Password" required>
-        <button id="saveButton" type="submit">Save</button>
+    <%- include('partials/navbar') %>
+    <div id = "container">
+        
+        <form action="/accounts/new" method="POST" >
+            
+            <div>
+                <label for="title"> Title : </label><br>
+                <input class="textArea" type="text" name="account[title]" placeholder="Title" required><br><br>
+            </div>
+            
+           <div>
+                <label for="email"> Email : </label><br>
+                <input class="textArea" type="email" name="account[email]" placeholder="Email" required><br><br>
+           </div>
+           
+            <div>
+                <label for="username">Username : </label><br>
+                <input class="textArea" type="text" name="account[username]" placeholder="Username" required><br><br>
+            </div>
+            
+            <div>
+                <label for="password"> Password : </label><br>
+                <input class="textArea" id="generatedPassword" type="text" name="account[password]" placeholder="Password" required><br><br> 
+            </div>
+            
+            <button id="saveButton" type="submit">Save</button>
 
-    </form>
+        </form>
+    </div>
 </body>
 </html>

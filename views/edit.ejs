@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit account credentials</title>
+    <style>
+        #container{
+            padding: 100px;
+            padding-top: 20px;
+            /* margin: auto; */
+            text-align: center;
+        }
+        form{
+            margin: auto;
+            padding: 100px;
+            background-color: rgb(61, 61, 61);
+            max-width: fit-content;
+        }
+        input{
+            padding: 10px;
+        }
+        label{
+            color: white;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+   
+    <div id = "container">
+        
+        <form action="/accounts/<%= account1._id %>?_method=PUT" method="POST" >
+            
+            <div>
+                <label for="title"> Title : </label><br>
+                <input class="textArea" type="text" name="title" placeholder="<%= account.title %>" value="<%= account.title %>"required><br><br>
+            </div>
+            
+           <div>
+                <label for="email"> Email : </label><br>
+                <input class="textArea" type="email" name="email"  placeholder="<%= account.email %>" value="<%= account.email %>" required><br><br>
+           </div>
+           
+            <div>
+                <label for="username">Username : </label><br>
+                <input class="textArea" type="text" name="username" placeholder="<%= account.username %>" value="<%= account.username %>" required><br><br>
+            </div>
+            
+            <div>
+                <label for="password"> Password : </label><br>
+                <input class="textArea" id="generatedPassword" type="text" name="password" placeholder="<%= account.password %>" value="<%= account.password %>" required><br><br> 
+            </div>
+            
+            <button id="saveButton" type="submit">Save</button>
+
+        </form>
+    </div>
+    <!-- <form action="/accounts/<%= account1._id %>?_method=PUT" method="POST" >
+        <input class="textArea" type="text" name="title" placeholder="<%= account.title %>" value="<%= account.title %>" required>
+        <input class="textArea" type="email" name="email" placeholder="<%= account.email %>" value="<%= account.email %>" required>
+        <input class="textArea" type="text" name="username" placeholder="<%= account.username %>" value="<%= account.username %>"  required>
+        <input class="textArea" id="generatedPassword" type="text" name="password" placeholder="<%= account.password %>" value="<%= account.password %>" required>
+        <button id="saveButton" type="submit">Save</button>
+
+    </form> -->
+</body>
+</html>

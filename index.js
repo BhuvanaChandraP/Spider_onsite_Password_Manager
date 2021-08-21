@@ -8,7 +8,8 @@ const LocalStrategy = require('passport-local');
 const methodOverride = require('method-override');
 const User = require('./models/user');
 const Account = require('./models/account');
-
+const Cryptr = require('cryptr'),
+     cryptr = new Cryptr('mySecretKey');
 
 checkAuth = async(req,res,next)=>{
     if(req.isAuthenticated()){
@@ -119,13 +120,148 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', passport.authenticate('local', {failureFlash : true, failureRedirect: '/login'}), async (req, res) => { 
     n = req.user.username;
-    res.render('home');
+    res.redirect('/home');
 });
 
 
-app.get("/home" , checkAuth , async(req,res)=>{
-   res.render('home');
-})
+// app.get("/home" , checkAuth , async(req,res)=>{
+//    res.render('home');
+// })
+
+
+
+
+
+
+
+
+
+app.get('/home', checkAuth, async(req, res) => {
+
+    // res.locals.pageTitle = 'Accounts Home';
+    // res.locals.stylesheet = 'accounts/accounts';
+    const foundUser = await User.findById(req.user._id).populate('accounts');
+    res.render('home', { foundUser:foundUser });
+    // User.findById(req.user._id).populate('accounts').exec((err, foundUser) =>{
+
+    //     if(err){
+    //         console.log(err);
+
+    //     } else {
+    //         res.render('accounts/accounts', {foundUser:foundUser});
+    //     }
+    // });
+});
+
+//Create a new account to be saved in the password manager
+app.get('/accounts/new', checkAuth, (req, res) =>{
+    res.render('new');
+});
+
+//Create
+app.post('/accounts/new', checkAuth, (req, res) =>{
+
+    User.findById(req.user._id, (err, foundUser) => {
+        if(err){
+            console.log(err);
+        } else {
+            
+            //const encryptedPassword = cryptr.encrypt(req.body.account.password);
+
+            Account.create({
+
+                title: req.body.account.title,
+                email: req.body.account.email,
+                username: req.body.account.username,
+                password: cryptr.encrypt(req.body.account.password)
+                
+            }, (err, createdAccount) =>{
+                if(err){
+                    console.log(err);
+                } else {
+                    foundUser.accounts.push(createdAccount);
+                    foundUser.save();
+                    res.redirect('/home')
+                }
+            });
+
+        }
+    });
+
+});
+
+
+
+app.get('/accounts/:id', checkAuth, async(req, res) => {
+
+    const account = await Account.findById(req.params.id);
+    res.render('show', {account ,  password: cryptr.decrypt(account.password)});
+   
+    // await Account.findById(req.params.id, (err, selectedAccount) =>{
+    //     if(err){
+    //         console.log(err);
+    //     } else {
+    //         const showAccount = {
+    //             id: selectedAccount.id,
+    //             title: selectedAccount.title,
+    //             username: selectedAccount.username,
+    //             password: cryptr.decrypt(selectedAccount.password)
+    //         }
+    //         res.render('show', {account: showAccount});
+    //     }
+    // });
+});
+app.delete('/accounts/:id', checkAuth, async(req, res) => {
+
+    await Account.findByIdAndDelete(req.params.id);
+    res.redirect('/home');
+   
+});
+
+
+
+app.get('/accounts/:id/edit', checkAuth, async(req, res) => {
+    
+    const account1 = await Account.findById(req.params.id);
+     Account.findById(req.params.id, (err, editAccount) =>{
+        if(err){
+            console.log(err);
+        } else {
+            const showAccount = {
+                id: editAccount.id,
+                title: editAccount.title,
+                email: editAccount.email,
+                username: editAccount.username,
+                password: cryptr.decrypt(editAccount.password)
+            }
+            res.render('edit', {account: showAccount , account1 });
+        }
+    });
+});
+
+//Update
+app.put('/accounts/:id', checkAuth, async(req, res) => {
+
+    const updatedAccount = {
+        title: req.body.title,
+        email: req.body.email,
+        username: req.body.username,
+        password: cryptr.encrypt(req.body.password)
+    }
+
+    await Account.findByIdAndUpdate(req.params.id, updatedAccount, (err, accountChanged) => {
+        if(err){
+            console.log(err);
+            res.redirect('/home');
+        } else {
+            res.redirect('/accounts/' + req.params.id);
+        }
+    });
+
+});
+
+
+
 
 app.get('/logout',(req,res)=>{
     req.logout();
