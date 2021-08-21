@@ -25,6 +25,11 @@
             color: white;
             font-size: 20px;
         }
+        @media only screen and (max-width: 800px) {
+           form{
+               padding-left: 20px;
+           }
+        }
     </style>
 </head>
 <body>
@@ -51,7 +56,7 @@
             
             <div>
                 <label for="password"> Password : </label><br>
-                <input class="textArea" id="generatedPassword" type="text" name="password" placeholder="<%= account.password %>" value="<%= account.password %>" required><br><br> 
+                <input class="textArea" id="generatedPassword" type="password" name="password" placeholder="<%= account.password %>" value="<%= account.password %>" required><br><br> 
             </div>
             
             <button id="saveButton" type="submit">Save</button>
